@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+version = "1.0.0"
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+    resourcePrefix "kjgallery_"
+
+    defaultConfig {
+        minSdkVersion 11
+        targetSdkVersion 23
+        versionCode 1
+        versionName version
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.commit451:PhotoView:1.2.4'
+    compile 'org.kymjs.kjframe:kjframe:2.5.1'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
+}

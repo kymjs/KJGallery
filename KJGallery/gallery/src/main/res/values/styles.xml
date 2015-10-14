@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- 加载滚动条样式 -->
+	<style name="loading">
+		<item name="android:indeterminate">true</item>
+		<item name="android:indeterminateDrawable">@drawable/progressloading</item>
+		<item name="android:indeterminateDuration">1000</item>
+		<item name="android:indeterminateOnly">true</item>
+	</style>
+</resources>

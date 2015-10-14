@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<TextView android:id="@+id/textView"
+			  android:layout_width="wrap_content"
+			  android:layout_height="wrap_content"
+			  android:layout_marginTop="40dp"
+			  android:text="图片路径可以是一个String，也可以是一个String数组。也支持gif图片"/>
+	<Button
+		android:id="@+id/button"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentStart="true"
+		android:layout_below="@+id/textView"
+		android:layout_marginLeft="44dp"
+		android:layout_marginStart="44dp"
+		android:layout_marginTop="77dp"
+		android:text="启动Demo"/>
+
+</RelativeLayout>
