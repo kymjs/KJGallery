@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 让KJBitmap兼容GifView
+ *
  * @author kymjs (http://www.kymjs.com/) on 10/13/15.
  */
 public class GifRequest extends Request<byte[]> {
@@ -66,7 +68,7 @@ public class GifRequest extends Request<byte[]> {
     }
 
     @Override
-    protected void deliverResponse(Map<String, String> header, byte[] response) {
+     protected void deliverResponse(Map<String, String> header, byte[] response) {
         if (mCallback != null) {
             mCallback.onSuccess(response);
         }

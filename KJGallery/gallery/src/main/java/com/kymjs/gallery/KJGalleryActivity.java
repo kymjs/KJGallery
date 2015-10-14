@@ -3,9 +3,11 @@ package com.kymjs.gallery;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.kymjs.kjframe.KJActivity;
 import org.kymjs.kjframe.KJBitmap;
@@ -31,6 +33,7 @@ public class KJGalleryActivity extends KJActivity {
     public static String URL_INDEX = "KJGalleryActivity_index";
 
     private HackyViewPager mViewPager;
+    private TextView textView;
 
     private String[] imageUrls;
     private int index;
@@ -57,9 +60,32 @@ public class KJGalleryActivity extends KJActivity {
     @Override
     public void initWidget() {
         super.initWidget();
+        textView = bindView(R.id.page_title);
+        if (imageUrls.length < 2) {
+            textView.setVisibility(View.GONE);
+        } else {
+            textView.setText(String.format("%d/%d", index + 1, imageUrls.length));
+        }
+
         mViewPager = bindView(R.id.view_pager);
         mViewPager.setAdapter(new SamplePagerAdapter());
         mViewPager.setCurrentItem(index);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int
+                    positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                textView.setText(String.format("%d/%d", position + 1, imageUrls.length));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
     }
 
     private class SamplePagerAdapter extends PagerAdapter {
@@ -78,7 +104,7 @@ public class KJGalleryActivity extends KJActivity {
 
             //根据图片类型的不同选择不同的加载方案
             String imageUrl = imageUrls[position];
-            if (imageUrl.contains(".gif")) {
+            if (imageUrl.endsWith(".gif")) {
                 displayGif(mProgressBar, gifView, imageUrl);
             } else {
                 displayImage(mProgressBar, photoView, imageUrl);
