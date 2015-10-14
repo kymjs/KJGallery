@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
             "http://www.kymjs.com/image/kymjs.png",
             "http://www.kymjs.com/image/logo_s.png",
             "http://www.kymjs.com/image/logo_grey.png",
+            "https://static.oschina.net/uploads/zb/2015/0905/214628_00Ui_1164691.gif",
             "http://www.kymjs.com/image/kymjs.png"
     };
 

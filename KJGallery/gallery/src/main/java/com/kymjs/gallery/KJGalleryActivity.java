@@ -78,7 +78,7 @@ public class KJGalleryActivity extends KJActivity {
 
             //根据图片类型的不同选择不同的加载方案
             String imageUrl = imageUrls[position];
-            if (imageUrl.endsWith(".gif")) {
+            if (imageUrl.contains(".gif")) {
                 displayGif(mProgressBar, gifView, imageUrl);
             } else {
                 displayImage(mProgressBar, photoView, imageUrl);
