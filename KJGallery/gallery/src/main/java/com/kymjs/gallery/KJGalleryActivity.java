@@ -85,7 +85,6 @@ public class KJGalleryActivity extends KJActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-
     }
 
     private class SamplePagerAdapter extends PagerAdapter {
@@ -134,6 +133,9 @@ public class KJGalleryActivity extends KJActivity {
                     try {
                         GifDrawable gifFromBytes = new GifDrawable(t);
                         gifView.setImageDrawable(gifFromBytes);
+                        //使用简版的
+//                        gifView.setBytes(t);
+//                        gifView.startAnimation();
                     } catch (IOException e) {
                         gifView.setImageResource(R.mipmap.default_img_rect);
                     }
