@@ -14,7 +14,6 @@ import org.kymjs.kjframe.KJBitmap;
 import org.kymjs.kjframe.KJHttp;
 import org.kymjs.kjframe.bitmap.BitmapCallBack;
 import org.kymjs.kjframe.http.HttpCallBack;
-import org.kymjs.kjframe.http.HttpConfig;
 import org.kymjs.kjframe.utils.StringUtils;
 
 import java.io.IOException;
@@ -52,9 +51,7 @@ public class KJGalleryActivity extends KJActivity {
         imageUrls = from.getStringArrayExtra(URL_KEY);
         index = from.getIntExtra(URL_INDEX, 0);
         kjb = new KJBitmap();
-        HttpConfig config = new HttpConfig();
-        config.cacheTime = 50000;
-        kjh = new KJHttp(config);
+        kjh = new KJHttp();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.kymjs.gallery;
 
+import org.kymjs.kjframe.bitmap.Persistence;
 import org.kymjs.kjframe.http.HttpCallBack;
 import org.kymjs.kjframe.http.HttpConfig;
 import org.kymjs.kjframe.http.HttpHeaderParser;
@@ -17,7 +18,7 @@ import java.util.Map;
  *
  * @author kymjs (http://www.kymjs.com/) on 10/13/15.
  */
-public class GifRequest extends Request<byte[]> {
+public class GifRequest extends Request<byte[]> implements Persistence {
 
     // 用来保证当前对象只有一个线程在访问
     private static final Object sDecodeLock = new Object();
@@ -61,14 +62,13 @@ public class GifRequest extends Request<byte[]> {
         if (response.data == null) {
             return Response.error(new KJHttpException(response));
         } else {
-            Response<byte[]> b = Response.success(response.data, response.headers,
+            return Response.success(response.data, response.headers,
                     HttpHeaderParser.parseCacheHeaders(mConfig, response));
-            return b;
         }
     }
 
     @Override
-     protected void deliverResponse(Map<String, String> header, byte[] response) {
+    protected void deliverResponse(Map<String, String> header, byte[] response) {
         if (mCallback != null) {
             mCallback.onSuccess(response);
         }
