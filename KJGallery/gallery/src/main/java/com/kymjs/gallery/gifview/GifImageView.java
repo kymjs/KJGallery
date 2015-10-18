@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2015, 张涛.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.kymjs.gallery.gifview;
 
 import android.content.Context;
@@ -11,167 +26,169 @@ import uk.co.senab.photoview.PhotoView;
 
 public class GifImageView extends PhotoView implements Runnable {
 
-  private static final String TAG = "GifDecoderView";
-  private GifDecoder gifDecoder;
-  private Bitmap tmpBitmap;
-  private final Handler handler = new Handler(Looper.getMainLooper());
-  private boolean animating;
-  private boolean shouldClear;
-  private Thread animationThread;
-  private OnFrameAvailable frameCallback = null;
-  private long framesDisplayDuration = -1l;
+    private static final String TAG = "GifDecoderView";
+    private GifDecoder gifDecoder;
+    private Bitmap tmpBitmap;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private boolean animating;
+    private boolean shouldClear;
+    private Thread animationThread;
+    private OnFrameAvailable frameCallback = null;
+    private long framesDisplayDuration = -1l;
 
-  private final Runnable updateResults = new Runnable() {
+    private final Runnable updateResults = new Runnable() {
+        @Override
+        public void run() {
+            if (tmpBitmap != null && !tmpBitmap.isRecycled()) {
+                setImageBitmap(tmpBitmap);
+            }
+        }
+    };
+
+    private final Runnable cleanupRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (tmpBitmap != null && !tmpBitmap.isRecycled()) {
+                tmpBitmap.recycle();
+            }
+            tmpBitmap = null;
+            gifDecoder = null;
+            animationThread = null;
+            shouldClear = false;
+        }
+    };
+
+    public GifImageView(final Context context, final AttributeSet attrs) {
+        super(context, attrs);
+    }
+
+    public GifImageView(final Context context) {
+        super(context);
+    }
+
+    public void setBytes(final byte[] bytes) {
+        gifDecoder = new GifDecoder();
+        try {
+            gifDecoder.read(bytes);
+        } catch (final OutOfMemoryError e) {
+            gifDecoder = null;
+            Log.e(TAG, e.getMessage(), e);
+            return;
+        }
+
+        if (canStart()) {
+            animationThread = new Thread(this);
+            animationThread.start();
+        }
+    }
+
+    public long getFramesDisplayDuration() {
+        return framesDisplayDuration;
+    }
+
+    /**
+     * Sets custom display duration in milliseconds for the all frames. Should be called before 
+     * {@link
+     * #startAnimation()}
+     *
+     * @param framesDisplayDuration Duration in milliseconds. Default value = -1, this property will
+     *                              be ignored and default delay from gif file will be used.
+     */
+    public void setFramesDisplayDuration(long framesDisplayDuration) {
+        this.framesDisplayDuration = framesDisplayDuration;
+    }
+
+    public void startAnimation() {
+        animating = true;
+
+        if (canStart()) {
+            animationThread = new Thread(this);
+            animationThread.start();
+        }
+    }
+
+    public boolean isAnimating() {
+        return animating;
+    }
+
+    public void stopAnimation() {
+        animating = false;
+
+        if (animationThread != null) {
+            animationThread.interrupt();
+            animationThread = null;
+        }
+    }
+
+    public void clear() {
+        animating = false;
+        shouldClear = true;
+        stopAnimation();
+    }
+
+    private boolean canStart() {
+        return animating && gifDecoder != null && animationThread == null;
+    }
+
+    public int getGifWidth() {
+        return gifDecoder.getWidth();
+    }
+
+    public int getGifHeight() {
+        return gifDecoder.getHeight();
+    }
+
     @Override
     public void run() {
-      if (tmpBitmap != null && !tmpBitmap.isRecycled()) {
-        setImageBitmap(tmpBitmap);
-      }
-    }
-  };
-
-  private final Runnable cleanupRunnable = new Runnable() {
-    @Override
-    public void run() {
-      if (tmpBitmap != null && !tmpBitmap.isRecycled()) {
-        tmpBitmap.recycle();
-      }
-      tmpBitmap = null;
-      gifDecoder = null;
-      animationThread = null;
-      shouldClear = false;
-    }
-  };
-
-  public GifImageView(final Context context, final AttributeSet attrs) {
-    super(context, attrs);
-  }
-
-  public GifImageView(final Context context) {
-    super(context);
-  }
-
-  public void setBytes(final byte[] bytes) {
-    gifDecoder = new GifDecoder();
-    try {
-      gifDecoder.read(bytes);
-    } catch (final OutOfMemoryError e) {
-      gifDecoder = null;
-      Log.e(TAG, e.getMessage(), e);
-      return;
-    }
-
-    if (canStart()) {
-      animationThread = new Thread(this);
-      animationThread.start();
-    }
-  }
-
-  public long getFramesDisplayDuration() {
-    return framesDisplayDuration;
-  }
-
-  /**
-   * Sets custom display duration in milliseconds for the all frames. Should be called before {@link
-   * #startAnimation()}
-   *
-   * @param framesDisplayDuration Duration in milliseconds. Default value = -1, this property will
-   *                              be ignored and default delay from gif file will be used.
-   */
-  public void setFramesDisplayDuration(long framesDisplayDuration) {
-    this.framesDisplayDuration = framesDisplayDuration;
-  }
-
-  public void startAnimation() {
-    animating = true;
-
-    if (canStart()) {
-      animationThread = new Thread(this);
-      animationThread.start();
-    }
-  }
-
-  public boolean isAnimating() {
-    return animating;
-  }
-
-  public void stopAnimation() {
-    animating = false;
-
-    if (animationThread != null) {
-      animationThread.interrupt();
-      animationThread = null;
-    }
-  }
-
-  public void clear() {
-    animating = false;
-    shouldClear = true;
-    stopAnimation();
-  }
-
-  private boolean canStart() {
-    return animating && gifDecoder != null && animationThread == null;
-  }
-
-  public int getGifWidth() {
-    return gifDecoder.getWidth();
-  }
-
-  public int getGifHeight() {
-    return gifDecoder.getHeight();
-  }
-
-  @Override public void run() {
-    if (shouldClear) {
-      handler.post(cleanupRunnable);
-      return;
-    }
-
-    final int n = gifDecoder.getFrameCount();
-    do {
-      for (int i = 0; i < n; i++) {
-        if (!animating) {
-          break;
+        if (shouldClear) {
+            handler.post(cleanupRunnable);
+            return;
         }
-        try {
-          tmpBitmap = gifDecoder.getNextFrame();
-          if (frameCallback != null) {
-            tmpBitmap = frameCallback.onFrameAvailable(tmpBitmap);
-          }
 
-          if (!animating) {
-            break;
-          }
-          handler.post(updateResults);
-        } catch (final ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
-          Log.w(TAG, e);
-        }
-        if (!animating) {
-          break;
-        }
-        gifDecoder.advance();
-        try {
-          Thread
-              .sleep(framesDisplayDuration > 0 ? framesDisplayDuration : gifDecoder.getNextDelay());
-        } catch (final Exception e) {
-          // suppress any exception
-          // it can be InterruptedException or IllegalArgumentException
-        }
-      }
-    } while (animating);
-  }
+        final int n = gifDecoder.getFrameCount();
+        do {
+            for (int i = 0; i < n; i++) {
+                if (!animating) {
+                    break;
+                }
+                try {
+                    tmpBitmap = gifDecoder.getNextFrame();
+                    if (frameCallback != null) {
+                        tmpBitmap = frameCallback.onFrameAvailable(tmpBitmap);
+                    }
 
-  public OnFrameAvailable getOnFrameAvailable() {
-    return frameCallback;
-  }
+                    if (!animating) {
+                        break;
+                    }
+                    handler.post(updateResults);
+                } catch (final ArrayIndexOutOfBoundsException | IllegalArgumentException e) {
+                    Log.w(TAG, e);
+                }
+                if (!animating) {
+                    break;
+                }
+                gifDecoder.advance();
+                try {
+                    Thread
+                            .sleep(framesDisplayDuration > 0 ? framesDisplayDuration : gifDecoder.getNextDelay());
+                } catch (final Exception e) {
+                    // suppress any exception
+                    // it can be InterruptedException or IllegalArgumentException
+                }
+            }
+        } while (animating);
+    }
 
-  public void setOnFrameAvailable(OnFrameAvailable frameProcessor) {
-    this.frameCallback = frameProcessor;
-  }
+    public OnFrameAvailable getOnFrameAvailable() {
+        return frameCallback;
+    }
 
-  public interface OnFrameAvailable {
+    public void setOnFrameAvailable(OnFrameAvailable frameProcessor) {
+        this.frameCallback = frameProcessor;
+    }
 
-    Bitmap onFrameAvailable(Bitmap bitmap);
-  }
+    public interface OnFrameAvailable {
+
+        Bitmap onFrameAvailable(Bitmap bitmap);
+    }
 }
