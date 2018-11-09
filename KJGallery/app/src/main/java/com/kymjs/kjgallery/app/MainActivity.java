@@ -24,14 +24,14 @@ import com.kymjs.gallery.KJGalleryActivity;
 public class MainActivity extends AppCompatActivity {
 
     String[] imageUrls = new String[]{
-            "http://www.kymjs.com/image/logo_s.jpg",
+            "https://www.kymjs.com/qiniu/image/logo_s.jpg",
             "https://static.oschina.net/uploads/zb/2015/0905/214628_00Ui_1164691.gif",
-            "http://www.oschina.net/js/ke/plugins/emoticons/9.gif",
-            "http://www.kymjs.com/image/logo_grey.png",
-            "http://www.kymjs.com/image/kymjs.png",
-            "http://www.kymjs.com/image/logo_s.png",
-            "http://www.kymjs.com/image/logo_grey.png",
-            "http://www.kymjs.com/image/kymjs.png"
+            "https://www.jiuwa.net/tuku/20170823/F45v1uhz.gif",
+            "https://www.kymjs.com/qiniu/image/logo_grey.png",
+            "https://www.kymjs.com/qiniu/image/kymjs.png",
+            "https://www.kymjs.com/qiniu/image/logo_s.png",
+            "https://www.kymjs.com/qiniu/image/logo_grey.png",
+            "https://www.kymjs.com/qiniu/image/kymjs.png"
     };
 
     @Override
